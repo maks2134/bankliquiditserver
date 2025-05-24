@@ -1,0 +1,24 @@
+services:
+  postgres_db:
+    image: postgres:14
+    container_name: bank_liquidity_pg_clean_start # Новое имя контейнера для ясности
+    environment:
+      POSTGRES_USER: bank_user
+      POSTGRES_PASSWORD: bank_password
+      POSTGRES_DB: bank_liquidity_db
+      TZ: "Europe/Minsk" # Замени на свою таймзону, если нужно
+      PGTZ: "Europe/Minsk"
+    ports:
+      - "5432:5432"
+    volumes:
+      - bank_db_data_clean:/var/lib/postgresql/data # Новое имя тома для чистоты
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bank_user -d bank_liquidity_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  bank_db_data_clean: # Соответствующее новое имя тома
+    driver: local
